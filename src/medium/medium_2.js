@@ -31,11 +31,10 @@ export function getAverageMpg() {
     highwayAvg /= length
     return {city: cityAvg, highway: highwayAvg}
 }
-
-export function getAverageMpgLength(length) {
+export function getAverageMpg2(array, length) {
     let cityAvg = 0
     let highwayAvg = 0
-    mpg_data.forEach(element => {
+    array.forEach(element => {
         cityAvg += element.city_mpg
         highwayAvg += element.highway_mpg
     });
@@ -43,6 +42,7 @@ export function getAverageMpgLength(length) {
     highwayAvg /= length
     return {city: cityAvg, highway: highwayAvg}
 }
+
 
 export function getYearStats() {
     let years = []
@@ -150,9 +150,11 @@ export function getAvgMpgYearHybrid() {
 
     years.forEach(element => {
         let year = element
+        let hybridLength = hybrids.filter(car => car.year == year).length
+        let nonhybridLength = nonHybrids.filter(car => car.year == year).length
         let tempObject = {
-            hybrid: getAverageMpg(hybrids.filter(car => car.year == year), hybrids.filter(car => car.year == year).length),
-            notHybrid: getAverageMpg(nonHybrids.filter(car => car.year == year), nonHybrids.filter(car => car.year == year).length)
+            hybrid: getAverageMpg2(hybrids.filter(car => car.year == year), hybridLength),
+            notHybrid: getAverageMpg2(nonHybrids.filter(car => car.year == year), nonhybridLength)
         }
         object1[year] = tempObject
     });
