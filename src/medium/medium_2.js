@@ -35,7 +35,6 @@ export function getAverageMpg() {
 export function getAverageMpgLength(length) {
     let cityAvg = 0
     let highwayAvg = 0
-    let length = length
     mpg_data.forEach(element => {
         cityAvg += element.city_mpg
         highwayAvg += element.highway_mpg
