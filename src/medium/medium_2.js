@@ -19,10 +19,54 @@ see under the methods section
  *
  * @param {allCarStats.ratioHybrids} ratio of cars that are hybrids
  */
+export function getAverageMpg() {
+    let cityAvg = 0
+    let highwayAvg = 0
+    let length = mpg_data.length
+    mpg_data.forEach(element => {
+        cityAvg += element.city_mpg
+        highwayAvg += element.highway_mpg
+    });
+    cityAvg /= length
+    highwayAvg /= length
+    return {city: cityAvg, highway: highwayAvg}
+}
+export function getAverageMpg2(array, length) {
+    let cityAvg = 0
+    let highwayAvg = 0
+    array.forEach(element => {
+        cityAvg += element.city_mpg
+        highwayAvg += element.highway_mpg
+    });
+    cityAvg /= length
+    highwayAvg /= length
+    return {city: cityAvg, highway: highwayAvg}
+}
+
+
+export function getYearStats() {
+    let years = []
+    mpg_data.forEach(element => {
+        years.push(element.year)
+    })
+    return getStatistics(years)
+}
+
+export function getRatio() {
+    let ratio = 0
+    let length = mpg_data.length
+    mpg_data.forEach(element => {
+        if (element.hybrid) {
+            ratio++
+        }
+    });
+    return ratio /= length
+}
+
 export const allCarStats = {
-    avgMpg: undefined,
-    allYearStats: undefined,
-    ratioHybrids: undefined,
+    avgMpg: getAverageMpg(),
+    allYearStats: getYearStats(),
+    ratioHybrids: getRatio(),
 };
 
 
@@ -83,7 +127,41 @@ export const allCarStats = {
  *
  * }
  */
+
+export function getMakesHybrids() {
+    let hybrids1 = mpg_data.reduce(function(key, value) {
+        if (key.find(element => element.make === value.make) == undefined) {
+            let hybrids2 = mpg_data.filter(car => car.make == value.make).filter(car => car.hybrid).map(car => car.id)
+            if (hybrids2.length > 0) {
+                key.push({make: value.make, hybrids: hybrids2});
+            }
+        }
+        return key
+    }, []);
+    hybrids1.sort((a, b) => b.hybrids.length - a.hybrids.length)
+    return hybrids1
+}
+
+export function getAvgMpgYearHybrid() {
+    let object1 = new Object()
+    let years = mpg_data.map(element => element.year)
+    let nonHybrids = mpg_data.filter(element => element.hybrid == false)
+    let hybrids = mpg_data.filter(element => element.hybrid == true)
+
+    years.forEach(element => {
+        let year = element
+        let hybridLength = hybrids.filter(car => car.year == year).length
+        let nonhybridLength = nonHybrids.filter(car => car.year == year).length
+        let tempObject = {
+            hybrid: getAverageMpg2(hybrids.filter(car => car.year == year), hybridLength),
+            notHybrid: getAverageMpg2(nonHybrids.filter(car => car.year == year), nonhybridLength)
+        }
+        object1[year] = tempObject
+    });
+    return object1
+}
+
 export const moreStats = {
-    makerHybrids: undefined,
-    avgMpgByYearAndHybrid: undefined
+    makerHybrids: getMakesHybrids(),
+    avgMpgByYearAndHybrid: getAvgMpgYearHybrid()
 };
